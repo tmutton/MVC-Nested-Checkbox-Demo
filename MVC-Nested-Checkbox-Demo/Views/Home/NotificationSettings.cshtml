@@ -1,0 +1,76 @@
+﻿@model MVC_Nested_Checkbox_Demo.Models.NotificationSettings
+
+<script type="text/javascript">
+    function foo(name) {
+        var el = document.getElementById(name);
+
+        var val = el.value;
+
+        if (val == 'true') {
+            document.getElementById(name).value = false;
+            document.getElementById(name).removeAttribute('checked');
+        }
+        else if (val == 'false') {
+            document.getElementById(name).value = true;
+            document.getElementById(name).setAttribute('checked', 'checked')
+        }
+    }
+</script>
+
+    @using (Html.BeginForm("Save", "Home", FormMethod.Post))
+    {
+        <div>
+            <h1>Notification Settings</h1>
+
+            <p>Update your notification settings below.</p>
+
+            <h2>Emails you want to receive</h2>
+            <table>
+                <tr>
+                    <td>
+                        Updates from projects I'm following
+                    </td>
+                    <td></td>
+                </tr>
+
+                @{int i = 0;}
+                @foreach (var projectFollow in Model.ProjectFollows)
+                {
+                    <input type="hidden" name="ProjectFollows[@i].Key" value="@projectFollow.Key" />
+                    <input type="hidden" name="ProjectFollows[@i].Value.ProjectName" value="@projectFollow.Value.ProjectName" />
+
+                    <tr>
+                        <td>
+                            @Html.Label(projectFollow.Value.ProjectName)
+                        </td>
+                        <td>
+                            <input type="checkbox" id="ProjectFollows[@i].Value.Follows" name="ProjectFollows[@i].Value.Follows"
+                                   value="@projectFollow.Value.Follows.ToString().ToLower()" @(projectFollow.Value.Follows ? "checked" : "")
+                                   onclick="foo('ProjectFollows[@i].Value.Follows')" />
+                        </td>
+                    </tr>
+                    i++;
+                }
+
+                <tr>
+                    <td>Updates from projects I like</td>
+                    <td>@Html.CheckBoxFor(model => model.UpdatesFromProjectsIlike)</td>
+                </tr>
+                <tr>
+                    <td>Updates from Movements I'm following</td>
+                    <td>@Html.CheckBoxFor(model => model.UpdatesFromMovementsImFollowing)</td>
+                </tr>
+                <tr>
+                    <td>Notifications about projects I create</td>
+                    <td>@Html.CheckBoxFor(model => model.NotificationsAboutProjectsICreate)</td>
+                </tr>
+                <tr>
+                    <td>Spacehive newsletter</td>
+                    <td>@Html.CheckBoxFor(model => model.Newsletter)</td>
+                </tr>
+            </table>
+
+            <input type="submit" value="Save" />
+
+        </div>
+    }
